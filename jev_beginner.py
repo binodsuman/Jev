@@ -1,9 +1,12 @@
+OPENROUTER_API_KEY = ""  # Paste your key here. Leave this empty to use the export below.
+
 """A first look at Jev, called through OpenRouter with plain HTTP.
 
 One request can ask several closed questions. Each answer is a number
 your code can branch on. Jev does not write a paragraph.
 
     pip install requests
+    # Either paste the key on the first line, or:
     export OPENROUTER_API_KEY="your_openrouter_key_here"
     python jev_beginner.py
 
@@ -53,11 +56,22 @@ QUESTIONS = {
 }
 
 
+def openrouter_key():
+    """Use the key on the first line. If that line is empty, use the environment."""
+    key = OPENROUTER_API_KEY.strip()
+    if key:
+        return key
+    return os.environ.get("OPENROUTER_API_KEY", "").strip()
+
+
 def ask_jev(ticket):
     """Send one ticket and every question. Return the JSON body."""
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key = openrouter_key()
     if not api_key:
-        raise SystemExit("Set OPENROUTER_API_KEY to your OpenRouter key, then run this again.")
+        raise SystemExit(
+            "Paste your OpenRouter key on the first line, "
+            "or export OPENROUTER_API_KEY, then run this again."
+        )
 
     response = requests.post(
         URL,
